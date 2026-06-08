@@ -5,7 +5,7 @@
    =========================================================================== */
 
 const VOTERS = [
-  { id: "spale",      name: "spale",      sub: "vlasnik servera",                  color: "#5865f2", online: true },
+  { id: "spale",      name: "spale",      sub: "bivši vlasnik — sam predao server 💀", color: "#5865f2", online: true },
   { id: "Aca",        name: "Aca",        sub: "",                                  color: "#eb459e", online: false },
   { id: "CikaJohnny", name: "CikaJohnny", sub: "jednog dana oženiću porno zvezdu",  color: "#f0b232", online: false, crown: true },
   { id: "Goku",       name: "Goku",       sub: "",                                  color: "#23a55a", online: false },
