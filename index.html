@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Referendum: izbacujemo li dule484?</title>
+  <meta name="description" content="Zvanični anonimni referendum o statusu korisnika dule484 na Discordu." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚪</text></svg>" />
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <canvas id="confetti"></canvas>
+
+  <main class="app">
+    <!-- HERO / SUBJECT -->
+    <header class="hero">
+      <div class="subject-card">
+        <div class="subject-banner"></div>
+        <div class="subject-avatar" aria-hidden="true">
+          <svg viewBox="0 0 71 55" width="42" height="42"><path fill="#fff" d="M60.1 4.9A58.5 58.5 0 0 0 45.6.4a.2.2 0 0 0-.2.1c-.6 1.1-1.3 2.6-1.8 3.7a54 54 0 0 0-16.2 0c-.5-1.2-1.2-2.6-1.9-3.7a.2.2 0 0 0-.2-.1A58.4 58.4 0 0 0 10.7 4.9a.2.2 0 0 0-.1.1C1.6 18.4-.9 31.5.4 44.5a.2.2 0 0 0 .1.2 58.9 58.9 0 0 0 17.7 9 .2.2 0 0 0 .3-.1c1.4-1.9 2.6-3.8 3.6-5.9a.2.2 0 0 0-.1-.3c-1.9-.7-3.7-1.6-5.5-2.6a.2.2 0 0 1 0-.4l1.1-.8a.2.2 0 0 1 .2 0 42 42 0 0 0 35.6 0 .2.2 0 0 1 .2 0l1.1.8a.2.2 0 0 1 0 .4c-1.7 1-3.6 1.9-5.5 2.6a.2.2 0 0 0-.1.3c1 2 2.3 4 3.6 5.9a.2.2 0 0 0 .3.1 58.7 58.7 0 0 0 17.7-9 .2.2 0 0 0 .1-.2c1.6-15-2.4-28-10.2-39.5a.2.2 0 0 0-.1-.1ZM23.7 36.6c-3.5 0-6.4-3.2-6.4-7.1 0-4 2.8-7.2 6.4-7.2 3.6 0 6.5 3.3 6.4 7.2 0 3.9-2.8 7.1-6.4 7.1Zm23.6 0c-3.5 0-6.4-3.2-6.4-7.1 0-4 2.8-7.2 6.4-7.2 3.6 0 6.5 3.3 6.4 7.2 0 3.9-2.8 7.1-6.4 7.1Z"/></svg>
+        </div>
+        <div class="subject-info">
+          <div class="subject-name">dule484 <span class="subject-bot">OPTUŽENI</span></div>
+          <div class="subject-tag">dule484</div>
+          <div class="subject-charge">Optužba: biti dule. Kazna: izgnanstvo sa servera.</div>
+        </div>
+      </div>
+      <h1 class="title">Izbacujemo li <span class="hl">duleta</span>?</h1>
+      <p class="subtitle">Zvanični referendum zajednice o statusu korisnika <b>dule484</b>.</p>
+      <p class="anon-note">🔒 Anonimno glasanje — vidi se <b>ko</b> je glasao, ali <b>nikad</b> kako.</p>
+    </header>
+
+    <!-- SCREEN 1: pick identity -->
+    <section id="screen-identity" class="screen">
+      <h2 class="screen-title">Ko si ti?</h2>
+      <p class="screen-hint">Izaberi sebe sa spiska. Ko je već glasao — nestao je odavde.</p>
+      <div id="voter-grid" class="voter-grid"></div>
+      <p id="all-voted" class="all-voted hidden">Svi su glasali. 🎉 Skoči na rezultate ispod.</p>
+    </section>
+
+    <!-- SCREEN 2: cast vote -->
+    <section id="screen-vote" class="screen hidden">
+      <button class="back-btn" id="back-btn">← nisam ja</button>
+      <p class="voting-as">Glasaš kao <span id="voting-as-name" class="voting-as-name"></span></p>
+      <h2 class="screen-title">Tvoja presuda?</h2>
+      <div class="vote-buttons">
+        <button class="vote-btn za" data-choice="za">
+          <span class="vote-emoji">🚪</span>
+          <span class="vote-label">ZA</span>
+          <span class="vote-sub">napolje sa duletom</span>
+        </button>
+        <button class="vote-btn protiv" data-choice="protiv">
+          <span class="vote-emoji">🛡️</span>
+          <span class="vote-label">PROTIV</span>
+          <span class="vote-sub">neka ostane, jadan</span>
+        </button>
+      </div>
+      <p id="vote-status" class="vote-status"></p>
+    </section>
+
+    <!-- SCREEN 3: results -->
+    <section id="screen-results" class="screen hidden">
+      <h2 class="screen-title">Presuda zajednice</h2>
+      <div class="tally">
+        <div class="tally-row">
+          <div class="tally-head"><span>🚪 ZA — izbaci</span><span id="za-count" class="tally-num">0</span></div>
+          <div class="bar"><div id="za-bar" class="bar-fill za"></div></div>
+        </div>
+        <div class="tally-row">
+          <div class="tally-head"><span>🛡️ PROTIV — ostaje</span><span id="protiv-count" class="tally-num">0</span></div>
+          <div class="bar"><div id="protiv-bar" class="bar-fill protiv"></div></div>
+        </div>
+      </div>
+      <p id="verdict" class="verdict"></p>
+      <div class="voted-list">
+        <div class="voted-head"><span id="voted-progress">0 / 6 glasalo</span></div>
+        <div id="voted-names" class="voted-names"></div>
+        <p class="voted-foot">Imena gore su samo <b>ko</b> je glasao. Kako je ko glasao — to baza ni sama ne zna. 🔒</p>
+      </div>
+      <button id="refresh-btn" class="refresh-btn">↻ osvježi rezultate</button>
+    </section>
+
+    <p id="error-banner" class="error-banner hidden"></p>
+    <footer class="foot">napravljeno iz čiste ljubavi prema duletu ❤️</footer>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

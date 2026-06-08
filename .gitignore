@@ -1,0 +1,24 @@
+# --- Claude / AI assistant fajlovi (NE idu u javni repo) ---
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+.claude.md
+.cursor/
+.aider*
+
+# --- tajne / env ---
+.env
+.env.*
+*.secret
+secrets.*
+
+# --- Supabase lokalni temp (linkovanje, lozinka, branchevi) ---
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+
+# --- node / os smeće ---
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
