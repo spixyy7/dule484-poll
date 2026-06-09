@@ -230,6 +230,39 @@ body {
 }
 .refresh-btn:hover { background: #393c43; }
 
+/* LIVE STANJE (scoreboard) */
+.scoreboard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  animation: pop .35s ease both;
+}
+.sb-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: .9rem; color: var(--muted); margin-bottom: 12px;
+}
+.sb-progress {
+  font-size: .76rem; color: var(--faint);
+  background: var(--bg-2); border: 1px solid var(--line);
+  padding: 3px 10px; border-radius: 999px;
+}
+.sb-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+.sb-side { display: flex; flex-direction: column; gap: 3px; }
+.sb-side.protiv { text-align: right; }
+.sb-num { font-size: 2rem; font-weight: 900; line-height: 1; }
+.sb-side.za .sb-num { color: var(--red); }
+.sb-side.protiv .sb-num { color: var(--green); }
+.sb-lbl { font-size: .74rem; color: var(--faint); }
+.sb-bar {
+  display: flex; height: 12px; border-radius: 999px; overflow: hidden;
+  background: var(--bg-2); border: 1px solid var(--line);
+}
+.sb-fill { height: 100%; width: 0; transition: width .6s cubic-bezier(.2,.9,.2,1); }
+.sb-fill.za { background: linear-gradient(90deg, var(--red-2), var(--red)); }
+.sb-fill.protiv { background: linear-gradient(90deg, var(--green), var(--green-2)); }
+
 /* misc */
 .error-banner {
   background: rgba(242,63,67,.12); border: 1px solid var(--red);

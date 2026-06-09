@@ -68,6 +68,8 @@ function show(screen) {
   for (const s of ["screen-identity", "screen-vote", "screen-results"]) {
     $(s).classList.toggle("hidden", s !== `screen-${screen}`);
   }
+  // kompaktno "Trenutno stanje" se vidi svuda OSIM na punom results ekranu
+  $("scoreboard").classList.toggle("hidden", screen === "results");
 }
 
 let selectedVoter = null;
@@ -83,11 +85,7 @@ function renderIdentity(votedNames) {
   grid.innerHTML = "";
   const remaining = VOTERS.filter((v) => !votedNames.includes(v.id));
 
-  if (remaining.length === 0) {
-    $("all-voted").classList.remove("hidden");
-  } else {
-    $("all-voted").classList.add("hidden");
-  }
+  $("all-voted").classList.toggle("hidden", remaining.length !== 0);
 
   for (const v of remaining) {
     const btn = document.createElement("button");
@@ -123,11 +121,11 @@ async function onVote(choice) {
     if (res === "ok") {
       localStorage.setItem(LS_KEY, selectedVoter.id);
       burstConfetti();
-      await loadResults();
+      await refreshAll();
       show("results");
     } else if (res === "already_voted") {
       $("vote-status").textContent = "Hmm, " + selectedVoter.name + " je već glasao. 👀";
-      await refreshIdentity();
+      await refreshAll();
       setTimeout(() => show("identity"), 1400);
     } else {
       $("vote-status").textContent = "Nešto ne valja: " + res;
@@ -139,15 +137,20 @@ async function onVote(choice) {
   }
 }
 
-// ---- results screen ----------------------------------------------------------
-let resultsTimer = null;
+// ---- render (scoreboard + results) -------------------------------------------
+let lastVotedKey = null;
 
-async function loadResults() {
-  const [tally, voted] = await Promise.all([fetchTally(), fetchVoters()]);
-  const za = tally.za || 0;
-  const protiv = tally.protiv || 0;
+function renderScoreboard(za, protiv, votedCount) {
+  $("sb-za").textContent = za;
+  $("sb-protiv").textContent = protiv;
   const total = za + protiv;
+  $("sb-bar-za").style.width = (total ? (za / total) * 100 : 0) + "%";
+  $("sb-bar-protiv").style.width = (total ? (protiv / total) * 100 : 0) + "%";
+  $("sb-progress").textContent = `${votedCount} / ${VOTERS.length} glasalo`;
+}
 
+function renderResults(za, protiv, voted) {
+  const total = za + protiv;
   $("za-count").textContent = za;
   $("protiv-count").textContent = protiv;
   $("za-bar").style.width = (total ? (za / total) * 100 : 0) + "%";
@@ -184,9 +187,23 @@ async function loadResults() {
   }
 }
 
-async function refreshIdentity() {
-  const voted = await fetchVoters();
-  renderIdentity(voted);
+function applyData(tally, voted) {
+  const za = tally.za || 0;
+  const protiv = tally.protiv || 0;
+  renderScoreboard(za, protiv, voted.length);
+  renderResults(za, protiv, voted);
+  // meni (spisak imena) osveži samo kad se zaista promeni ko je glasao
+  const key = voted.slice().sort().join(",");
+  if (key !== lastVotedKey) {
+    lastVotedKey = key;
+    renderIdentity(voted);
+  }
+}
+
+async function refreshAll() {
+  const [tally, voted] = await Promise.all([fetchTally(), fetchVoters()]);
+  applyData(tally, voted);
+  return voted;
 }
 
 // ---- confetti ----------------------------------------------------------------
@@ -239,7 +256,7 @@ $("back-btn").addEventListener("click", () => {
   selectedVoter = null;
   show("identity");
 });
-$("refresh-btn").addEventListener("click", () => loadResults());
+$("refresh-btn").addEventListener("click", () => refreshAll());
 
 // ---- boot --------------------------------------------------------------------
 async function boot() {
@@ -248,22 +265,17 @@ async function boot() {
     return;
   }
   try {
-    const voted = await fetchVoters();
-    renderIdentity(voted);
+    const voted = await refreshAll();
 
     const me = localStorage.getItem(LS_KEY);
     if (me && voted.includes(me)) {
-      // ovaj browser je već glasao → idi pravo na rezultate
-      await loadResults();
-      show("results");
+      show("results"); // ovaj browser je već glasao → pravo na pune rezultate
     } else {
       show("identity");
     }
 
-    // blago auto-osvežavanje dok gledaš rezultate
-    resultsTimer = setInterval(() => {
-      if (!$("screen-results").classList.contains("hidden")) loadResults();
-    }, 6000);
+    // uživo osvežavanje na svim ekranima (stanje + meni + rezultati)
+    setInterval(refreshAll, 6000);
   } catch (e) {
     showError("Ne mogu da se povežem sa bazom. Probaj da osvežiš stranicu.");
   }
